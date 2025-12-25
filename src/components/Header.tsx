@@ -3,6 +3,8 @@
 import { useState, useRef } from "react";
 import { useWorkflowStore, WorkflowFile } from "@/store/workflowStore";
 import { ProjectSetupModal } from "./ProjectSetupModal";
+import { captureScreenshot } from "@/utils/screenshot";
+import { useToast } from "./Toast";
 
 export function Header() {
   const {
@@ -17,6 +19,7 @@ export function Header() {
     loadWorkflow,
   } = useWorkflowStore();
 
+  const { show: showToast } = useToast();
   const [showProjectModal, setShowProjectModal] = useState(false);
   const [projectModalMode, setProjectModalMode] = useState<"new" | "settings">("new");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +46,16 @@ export function Header() {
 
   const handleOpenFile = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleScreenshot = async () => {
+    try {
+      await captureScreenshot();
+      showToast("Screenshot saved!", "success");
+    } catch (error) {
+      console.error("Screenshot failed:", error);
+      showToast("Failed to capture screenshot", "error");
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,6 +206,32 @@ export function Header() {
             </>
           )}
           <span className="text-neutral-500 ml-2">·</span>
+          <button
+            onClick={handleScreenshot}
+            className="text-neutral-400 hover:text-neutral-200 transition-colors flex items-center gap-1.5"
+            title="Capture screenshot"
+          >
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z"
+              />
+            </svg>
+            <span>Screenshot</span>
+          </button>
+          <span className="text-neutral-500">·</span>
           <a
             href="https://x.com/ReflctWillie"
             target="_blank"
