@@ -50,6 +50,9 @@ function downloadImage(url: string, filename: string): void {
  * Generates a timestamp-based filename
  */
 export function generateScreenshotFilename(prefix: string = 'workflow'): string {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5); // Remove last 5 chars (milliseconds and 'Z')
+  // Format: 2025-12-25T11-12-08 (removes milliseconds and 'Z' from ISO string)
+  const isoString = new Date().toISOString(); // e.g., "2025-12-25T11:12:08.123Z"
+  const withoutMs = isoString.split('.')[0]; // Remove milliseconds and Z: "2025-12-25T11:12:08"
+  const timestamp = withoutMs.replace(/[:.]/g, '-'); // Replace colons and dots: "2025-12-25T11-12-08"
   return `${prefix}-${timestamp}.png`;
 }
