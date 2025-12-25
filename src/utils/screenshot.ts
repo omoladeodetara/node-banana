@@ -10,7 +10,7 @@ export async function captureScreenshot(
   elementSelector: string = '.react-flow',
   filename?: string
 ): Promise<void> {
-  const element = document.querySelector(elementSelector) as HTMLElement;
+  const element = document.querySelector(elementSelector) as HTMLElement | null;
   
   if (!element) {
     throw new Error('Canvas element not found');
@@ -50,6 +50,6 @@ function downloadImage(url: string, filename: string): void {
  * Generates a timestamp-based filename
  */
 export function generateScreenshotFilename(prefix: string = 'workflow'): string {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5); // Remove last 5 chars (milliseconds and 'Z')
   return `${prefix}-${timestamp}.png`;
 }
